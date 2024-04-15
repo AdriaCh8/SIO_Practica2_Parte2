@@ -1,5 +1,4 @@
 class Buscador:
-    #Solo prueba ha poder hacer un commit (ADRIAN)
     def main():
         print("Bienvenido al seleccionador de preferencias de entretenimiento!")
 
