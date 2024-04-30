@@ -17,7 +17,8 @@ class Buscador:
         return self.connection, self.cursor
 
     def main(self):  # Cambio aquí
-        print("Bienvenido al seleccionador de preferencias de entretenimiento!")
+        print("Bienvenido al sistema de recomendación!")
+        print("A continuación, te haremos unas preguntas para recomendarte películas y series.")
 
         # Opciones de género
         generos = [
@@ -113,7 +114,7 @@ class Buscador:
     def queryCondicionada(self, generos_usuario, tipo_preferido, duracion_preferida_peliculas, duracion_preferida_series, tipo_series, plataformas_usuario, paises_usuario, paises, busquedaPosible):
         # Query condicionada
         # Base de la consulta
-        query = "SELECT * FROM movie_serie"
+        query = "SELECT movie_serie.title,movie_serie.runtime FROM movie_serie"
         print(query)
         # Añadiendo filtro por género
         query += " INNER JOIN " + " produccion_generos " + " ON " + " movie_serie.id = " + " produccion_generos.produccion " 
@@ -210,7 +211,7 @@ class Buscador:
         print("Películas:")
         repeticion=0
         if resultado:
-            j=100
+            j=50
             for i,res in enumerate(resultado,1):
                 if i<=j:
                     print(f"{i}. {res}")
@@ -218,8 +219,11 @@ class Buscador:
                     print("Quieres ver más películas? Ingresa 's' para sí o 'n' para no: ")
                     respuesta = input()
                     if respuesta=="s" and i<len(resultado):
-                            j+=100
+                            j+=50
+                            i=j
                     else:
+                         print("No se encontraron más películas con tus preferencias.")
+                         repeticion=2
                          break
                     
         else:
@@ -228,7 +232,7 @@ class Buscador:
         print("=============")
         print("Series:")
         if resultado2:
-            j=100
+            j=50
             for i,res in enumerate(resultado2,1):
                 if i<=j:
                     print(f"{i}. {res}")
@@ -236,15 +240,17 @@ class Buscador:
                     print("Quieres ver más series? Ingresa 's' para sí o 'n' para no: ")
                     respuesta = input()
                     if respuesta=="s" and i<len(resultado2):
-                            j+=100
+                            j+=50
                     else:
+                         print("No se encontraron más series con tus preferencias.")
+                         repeticion=2
                          break
         else:
             print("No se encontraron series con tus preferencias.")
             repeticion+=1
 
         
-        if repeticion==2:
+        if repeticion>=2:
             while busquedaPosible>1:
                 print("")
                 print("No se encontraron películas ni series con tus preferencias. Vamos a intentar encontrar algo para ti.")
