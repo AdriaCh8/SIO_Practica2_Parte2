@@ -1,5 +1,6 @@
 import mysql.connector
 import re
+import json
 
 class Buscador:
 
@@ -112,7 +113,7 @@ class Buscador:
     def queryCondicionada(self, generos_usuario, tipo_preferido, duracion_preferida_peliculas, duracion_preferida_series, tipo_series, plataformas_usuario, paises_usuario, paises, busquedaPosible):
         # Query condicionada
         # Base de la consulta
-        query = "SELECT movie_serie.title FROM movie_serie "
+        query = "SELECT * FROM movie_serie"
         print(query)
         # Añadiendo filtro por género
         query += " INNER JOIN " + " produccion_generos " + " ON " + " movie_serie.id = " + " produccion_generos.produccion " 
@@ -163,8 +164,10 @@ class Buscador:
 
         if tipo_preferido == 1 or tipo_preferido == 3:
             query += f" WHERE ({where_filters})"
+            query += " ORDER BY movie_serie.tmdb_score DESC"
         if tipo_preferido == 2 or tipo_preferido == 3:
             query2 += f" WHERE ({where_filters2})"
+            query2 += " ORDER BY movie_serie.tmdb_score DESC"
         
         print(query)
         print("=====================================")
@@ -207,20 +210,40 @@ class Buscador:
         print("Películas:")
         repeticion=0
         if resultado:
+            j=100
             for i,res in enumerate(resultado,1):
+                if i<=j:
                     print(f"{i}. {res}")
+                else:
+                    print("Quieres ver más películas? Ingresa 's' para sí o 'n' para no: ")
+                    respuesta = input()
+                    if respuesta=="s" and i<len(resultado):
+                            j+=100
+                    else:
+                         break
+                    
         else:
             print("No se encontraron películas con tus preferencias.")
             repeticion+=1
         print("=============")
         print("Series:")
         if resultado2:
+            j=100
             for i,res in enumerate(resultado2,1):
+                if i<=j:
                     print(f"{i}. {res}")
+                else:
+                    print("Quieres ver más series? Ingresa 's' para sí o 'n' para no: ")
+                    respuesta = input()
+                    if respuesta=="s" and i<len(resultado2):
+                            j+=100
+                    else:
+                         break
         else:
             print("No se encontraron series con tus preferencias.")
             repeticion+=1
 
+        
         if repeticion==2:
             while busquedaPosible>1:
                 print("")
@@ -267,7 +290,7 @@ class Buscador:
             print("¿Qué es menos importante para ti?")
             opcion_descartada = input("Elige el número de la preferencia a descartar (1, 2, 3, 4...): ")   
             if opcion_descartada == '1':
-                generos_usuario = None
+                generos_usuario = ("family", "reality", "european", "animation", "thriller", "horror", "sport", "documentary", "western", "drama", "fantasy", "crime", "history", "action", "war", "music", "comedy", "romance", "sci-fi")
             elif opcion_descartada == '2':
                 tipo_preferido = 3
             elif opcion_descartada == '3':
